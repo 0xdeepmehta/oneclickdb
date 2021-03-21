@@ -1,18 +1,29 @@
 from typing import Optional
 import logging
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from models import UserInBucket, UserOutBucket
 import pymongo
 from mongodb_utils import startup_event,shutdown_event
 from mongodb import AsyncIOMotorClient, get_database
 
 app = FastAPI(title="OneClick DB API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 #Adding a controll to start and stop mongodb connection
 app.add_event_handler("startup", startup_event)
 app.add_event_handler("shutdown", shutdown_event)
 
 database_name = "oneclick-db"
 collection_name = "user_data"
+
+# @app.post("/token")
+# async def 
 
 @app.post("/")
 async def storeUserPayload(payload: UserInBucket, db: AsyncIOMotorClient = Depends(get_database)):
